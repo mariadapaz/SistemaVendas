@@ -32,7 +32,9 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="btnAtualizar" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="407" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
+                      <Component id="btnExportarPdf" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="281" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -50,7 +52,10 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-              <Component id="btnAtualizar" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnAtualizar" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnExportarPdf" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace pref="37" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -96,6 +101,14 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Relat&#xf3;rio de Vendas"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnExportarPdf">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Exportar PDF"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExportarPdfActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

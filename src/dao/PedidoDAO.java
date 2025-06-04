@@ -22,7 +22,7 @@ import model.Pedido;
 public class PedidoDAO {
 
     public void fazerPedido(String cpfCliente, String cpfFuncionario, String formaPagamento, List<ItemCarrinho> itens) {
-        String sqlPedido = "INSERT INTO pedido (cpf_cliente, cpf_funcionario, forma_pagamento, data_de_venda) VALUES (?, ?, ?, ?) RETURNING id_pedido";
+        String sqlPedido = "INSERT INTO pedido (cpf_cliente, cpf_funcionario, forma_pagamento, data_de_venda, status) VALUES (?, ?, ?, ?, ?) RETURNING id_pedido";
         String sqlItem = "INSERT INTO pedido_has_produto (pedido_id_pedido, produto_id_produto, preco, quantidade) VALUES (?, ?, ?, ?)";
         String sqlEstoque = "UPDATE produto SET quantidade_no_estoque = quantidade_no_estoque - ? WHERE id_produto = ?";
 
@@ -37,6 +37,7 @@ public class PedidoDAO {
                 stmtPedido.setString(2, cpfFuncionario);
                 stmtPedido.setString(3, formaPagamento);
                 stmtPedido.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                stmtPedido.setString(5, "Pendente");
 
                 ResultSet rs = stmtPedido.executeQuery();
                 rs.next();
@@ -82,6 +83,7 @@ public class PedidoDAO {
             p.setCpfFuncionario(rs.getString("cpf_funcionario"));
             p.setFormaPagamento(rs.getString("forma_pagamento"));
             p.setDataDeVenda(rs.getTimestamp("data_de_venda").toLocalDateTime());
+            p.setStatus(rs.getString("status"));
 
             lista.add(p);
         }
@@ -93,7 +95,7 @@ public class PedidoDAO {
     return lista;
 }
     public boolean confirmarPedido(int idPedido) {
-    String sql = "UPDATE pedido SET data_de_confirmacao = CURRENT_TIMESTAMP WHERE id_pedido = ?";
+    String sql = "UPDATE pedido SET data_de_confirmacao = CURRENT_TIMESTAMP, status = 'Finalizado' WHERE id_pedido = ?";
 
     try (Connection conn = Conexao.getConexao();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -104,6 +106,22 @@ public class PedidoDAO {
 
     } catch (SQLException e) {
         System.out.println("Erro ao confirmar pedido: " + e.getMessage());
+        return false;
+    }
+    }
+    
+    public boolean cancelarPedido(int idPedido) {
+    String sql = "UPDATE pedido SET status = 'Cancelado' WHERE id_pedido = ?";
+
+    try (Connection conn = Conexao.getConexao();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, idPedido);
+        int linhasAfetadas = stmt.executeUpdate();
+        return linhasAfetadas > 0;
+
+    } catch (SQLException e) {
+        System.out.println("Erro ao cancelar pedido: " + e.getMessage());
         return false;
     }
 }
@@ -134,6 +152,7 @@ public class PedidoDAO {
                 rs.getString("forma_pagamento"),
                 rs.getTimestamp("data_de_venda").toString(),
                 rs.getTimestamp("data_de_confirmacao").toString(),
+                rs.getString("status").toString(),
                 rs.getBigDecimal("total").toString()
             });
         }

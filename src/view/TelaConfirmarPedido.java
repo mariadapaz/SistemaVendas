@@ -24,6 +24,7 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         carregarPedidosPendentes();
+        
     }
 
     /**
@@ -37,7 +38,7 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPedidos = new javax.swing.JTable();
-        btnAtualizar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
         btnConfirmar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
@@ -56,10 +57,10 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblPedidos);
 
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtualizarActionPerformed(evt);
+                btnCancelarActionPerformed(evt);
             }
         });
 
@@ -82,15 +83,16 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(316, 316, 316)
-                        .addComponent(btnAtualizar)
+                        .addComponent(btnCancelar)
                         .addGap(87, 87, 87)
                         .addComponent(btnConfirmar))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(212, 212, 212)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(327, 327, 327)
-                        .addComponent(jLabel1)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(212, 212, 212)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(327, 327, 327)
+                            .addComponent(jLabel1))))
                 .addContainerGap(223, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -102,7 +104,7 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAtualizar)
+                    .addComponent(btnCancelar)
                     .addComponent(btnConfirmar))
                 .addGap(44, 44, 44))
         );
@@ -128,10 +130,25 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
+        int linha = tblPedidos.getSelectedRow();
+        if (linha >= 0) {
+            int id = Integer.parseInt(tblPedidos.getValueAt(linha, 0).toString());
+            boolean cancelado = new PedidoDAO().cancelarPedido(id);
+
+            if (cancelado) {
+                JOptionPane.showMessageDialog(this, "Pedido cancelado com sucesso!");
+                carregarPedidosPendentes();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao cancelar pedido.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um pedido.");
+    }
         carregarPedidosPendentes();
-    }//GEN-LAST:event_btnAtualizarActionPerformed
+        
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -179,7 +196,7 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConfirmar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

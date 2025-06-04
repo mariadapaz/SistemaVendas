@@ -23,6 +23,7 @@ public class TelaCarrinhoPedido extends javax.swing.JFrame {
     private ProdutoDAO produtoDAO = new ProdutoDAO();
     private String clienteCpf = "000.000.000-00";       
     private String funcionarioCpf = "123.456.789-56";   
+    private String status;
 
 
     /**

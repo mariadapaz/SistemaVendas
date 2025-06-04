@@ -13,6 +13,7 @@ public class Pedido {
     private String formaPagamento;
     private LocalDateTime dataDeVenda;
     private LocalDateTime dataDeConfirmacao;
+    private String status;
 
     public Pedido() {}
 
@@ -24,6 +25,7 @@ public class Pedido {
         this.formaPagamento = formaPagamento;
         this.dataDeVenda = dataDeVenda;
         this.dataDeConfirmacao = dataDeConfirmacao;
+        this.status = "Pendente";
     }
 
     // Getters e Setters
@@ -74,4 +76,14 @@ public class Pedido {
     public void setDataDeConfirmacao(LocalDateTime dataDeConfirmacao) {
         this.dataDeConfirmacao = dataDeConfirmacao;
     }
+    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
+    
 }

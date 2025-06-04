@@ -4,8 +4,17 @@
  */
 package view;
 
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import dao.PedidoDAO;
+import java.io.FileOutputStream;
 import java.util.List;
+import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -37,6 +46,7 @@ public class TelaRelatorioVendas extends javax.swing.JFrame {
         tblRelatorio = new javax.swing.JTable();
         btnAtualizar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        btnExportarPdf = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,6 +74,13 @@ public class TelaRelatorioVendas extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 102, 204));
         jLabel1.setText("Relatório de Vendas");
 
+        btnExportarPdf.setText("Exportar PDF");
+        btnExportarPdf.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarPdfActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -76,7 +93,9 @@ public class TelaRelatorioVendas extends javax.swing.JFrame {
                         .addGap(216, 216, 216))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnAtualizar)
-                        .addGap(407, 407, 407))
+                        .addGap(94, 94, 94)
+                        .addComponent(btnExportarPdf)
+                        .addGap(281, 281, 281))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(327, 327, 327))))
@@ -89,7 +108,9 @@ public class TelaRelatorioVendas extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
-                .addComponent(btnAtualizar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAtualizar)
+                    .addComponent(btnExportarPdf))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
@@ -100,6 +121,42 @@ public class TelaRelatorioVendas extends javax.swing.JFrame {
         // TODO add your handling code here:
         carregarRelatorio();
     }//GEN-LAST:event_btnAtualizarActionPerformed
+
+    private void btnExportarPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarPdfActionPerformed
+        // TODO add your handling code here:
+        try {
+        Document doc = new Document();
+        PdfWriter.getInstance(doc, new FileOutputStream("relatorio_vendas.pdf"));
+        doc.open();
+
+        doc.add(new Paragraph("Relatório de Vendas"));
+        doc.add(new Paragraph(" "));
+
+        PdfPTable tabela = new PdfPTable(tblRelatorio.getColumnCount());
+
+        // Cabeçalhos
+        for (int i = 0; i < tblRelatorio.getColumnCount(); i++) {
+            tabela.addCell(new PdfPCell(new Phrase(tblRelatorio.getColumnName(i))));
+        }
+
+        // Linhas
+        for (int i = 0; i < tblRelatorio.getRowCount(); i++) {
+            for (int j = 0; j < tblRelatorio.getColumnCount(); j++) {
+                Object valor = tblRelatorio.getValueAt(i, j);
+                tabela.addCell(valor == null ? "" : valor.toString());
+            }
+        }
+
+        doc.add(tabela);
+        doc.close();
+
+        JOptionPane.showMessageDialog(this, "PDF exportado com sucesso para 'relatorio_vendas.pdf'.");
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Erro ao exportar PDF: " + e.getMessage());
+        e.printStackTrace();
+    }
+    }//GEN-LAST:event_btnExportarPdfActionPerformed
 
     /**
      * @param args the command line arguments
@@ -143,6 +200,7 @@ public class TelaRelatorioVendas extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnExportarPdf;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblRelatorio;
