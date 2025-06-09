@@ -129,33 +129,40 @@ public class PedidoDAO {
     List<String[]> lista = new ArrayList<>();
 
     String sql = """
-        SELECT p.id_pedido, c.nome AS cliente, f.nome AS funcionario,
-               p.forma_pagamento, p.data_de_venda, p.data_de_confirmacao,
-               SUM(pp.preco * pp.quantidade) AS total
-        FROM pedido p
-        JOIN cliente c ON c.cpf = p.cpf_cliente
-        JOIN funcionario f ON f.cpf = p.cpf_funcionario
-        JOIN pedido_has_produto pp ON pp.pedido_id_pedido = p.id_pedido
-        GROUP BY p.id_pedido, c.nome, f.nome, p.forma_pagamento, p.data_de_venda, p.data_de_confirmacao
-        ORDER BY p.data_de_confirmacao DESC
-    """;
+    SELECT p.id_pedido, c.nome AS cliente, f.nome AS funcionario,
+           p.forma_pagamento, p.data_de_venda, p.data_de_confirmacao,
+           p.status,
+           SUM(pp.preco * pp.quantidade) AS total
+    FROM pedido p
+    JOIN cliente c ON c.cpf = p.cpf_cliente
+    JOIN funcionario f ON f.cpf = p.cpf_funcionario
+    JOIN pedido_has_produto pp ON pp.pedido_id_pedido = p.id_pedido
+    GROUP BY p.id_pedido, c.nome, f.nome, p.forma_pagamento,
+             p.data_de_venda, p.data_de_confirmacao, p.status
+    ORDER BY p.data_de_confirmacao DESC
+""";
+
 
     try (Connection conn = Conexao.getConexao();
          PreparedStatement stmt = conn.prepareStatement(sql);
          ResultSet rs = stmt.executeQuery()) {
 
         while (rs.next()) {
-            lista.add(new String[] {
-                String.valueOf(rs.getInt("id_pedido")),
-                rs.getString("cliente"),
-                rs.getString("funcionario"),
-                rs.getString("forma_pagamento"),
-                rs.getTimestamp("data_de_venda").toString(),
-                rs.getTimestamp("data_de_confirmacao").toString(),
-                rs.getString("status").toString(),
-                rs.getBigDecimal("total").toString()
-            });
-        }
+    Timestamp dataVenda = rs.getTimestamp("data_de_venda");
+    Timestamp dataConfirmacao = rs.getTimestamp("data_de_confirmacao");
+
+    lista.add(new String[] {
+        String.valueOf(rs.getInt("id_pedido")),
+        rs.getString("cliente"),
+        rs.getString("funcionario"),
+        rs.getString("forma_pagamento"),
+        (dataVenda != null) ? dataVenda.toString() : "Não registrada",
+        (dataConfirmacao != null) ? dataConfirmacao.toString() : "Não confirmada",
+        rs.getString("status"),
+        rs.getBigDecimal("total").toString()
+    });
+}
+
 
     } catch (SQLException e) {
         System.out.println("Erro ao gerar relatório de vendas: " + e.getMessage());
