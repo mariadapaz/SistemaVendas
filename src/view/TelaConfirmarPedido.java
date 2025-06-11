@@ -154,8 +154,8 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
     private void carregarPedidosPendentes() {
     List<Pedido> lista = new PedidoDAO().listarPedidosPendentes();
 
-    String[] colunas = {"ID", "Cliente", "Funcionário", "Forma de Pagamento", "Data Venda"};
-    Object[][] dados = new Object[lista.size()][5];
+    String[] colunas = {"ID", "Cliente", "Funcionário", "Forma de Pagamento", "Data Venda", "Status"};
+    Object[][] dados = new Object[lista.size()][6];
 
     for (int i = 0; i < lista.size(); i++) {
         Pedido p = lista.get(i);
@@ -164,6 +164,7 @@ public class TelaConfirmarPedido extends javax.swing.JFrame {
         dados[i][2] = p.getCpfFuncionario();
         dados[i][3] = p.getFormaPagamento();
         dados[i][4] = p.getDataDeVenda();
+        dados[i][5] = p.getStatus();
     }
 
     tblPedidos.setModel(new javax.swing.table.DefaultTableModel(dados, colunas));

@@ -19,7 +19,7 @@ import java.util.List;
 public class ProdutoDAO {
 
     public void inserir(Produto produto) {
-        String sql = "INSERT INTO produto (nome, tipo, preco, quantidade_no_estoque) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO produto (nome, tipo, preco, quantidade_no_estoque, status) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = Conexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -28,6 +28,7 @@ public class ProdutoDAO {
             stmt.setString(2, produto.getTipo());
             stmt.setBigDecimal(3, produto.getPreco());
             stmt.setInt(4, produto.getQuantidadeNoEstoque());
+            stmt.setBoolean(5, true);
 
             stmt.executeUpdate();
         } catch (SQLException e) {

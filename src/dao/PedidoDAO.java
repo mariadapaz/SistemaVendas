@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import model.Pedido;
+import model.Produto;
 
 public class PedidoDAO {
 
@@ -68,6 +69,35 @@ public class PedidoDAO {
             System.out.println("Erro ao fazer pedido: " + e.getMessage());
         }
     }
+    
+    public List<Pedido> listar() {
+        List<Pedido> lista = new ArrayList<>();
+        String sql = "SELECT * FROM pedido";
+
+        try (Connection conn = Conexao.getConexao();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Pedido pedido = new Pedido();
+                pedido.setIdPedido(rs.getInt("id_pedido"));
+                pedido.setDataDeVenda(
+                rs.getTimestamp("data_de_venda") != null
+                ? rs.getTimestamp("data_de_venda").toLocalDateTime()
+        : null
+);
+
+                pedido.setStatus(rs.getString("status"));
+
+                lista.add(pedido);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar pedidos: " + e.getMessage());
+        }
+
+        return lista;
+    }
+    
     public List<Pedido> listarPedidosPendentes() {
     List<Pedido> lista = new ArrayList<>();
     String sql = "SELECT * FROM pedido WHERE data_de_confirmacao IS NULL";
@@ -171,6 +201,69 @@ public class PedidoDAO {
     return lista;
 }
 
+    public List<String[]> listarProdutoEmFalta() {
+    List<String[]> lista = new ArrayList<>();
+
+    String sql = """
+    select p.nome, p.quantidade_no_estoque, p.preco, p.tipo, p.status 
+    from produto p where p.quantidade_no_estoque = 0;
+""";
+
+
+    try (Connection conn = Conexao.getConexao();
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+
+    lista.add(new String[] {
+        rs.getString("nome"),
+        rs.getString("quantidade_no_estoque"),
+        rs.getBigDecimal("Preco").toString(),
+        rs.getString("Tipo"),
+        rs.getString("Status")
+    });
+}
+
+
+    } catch (SQLException e) {
+        System.out.println("Erro ao gerar relatório de vendas: " + e.getMessage());
+    }
+
+    return lista;
+}
+    
+    public Pedido buscarPorId(int id) {
+    String sql = "SELECT P.FORMA_PAGAMENTO, P.DATA_DE_VENDA, F.NOME, C.NOME, PP.PRECO, p.data_de_confirmacao FROM PEDIDO p\n" +
+                "JOIN PEDIDO_HAS_PRODUTO PP ON PP.Pedido_ID_PEDIDO = P.ID_PEDIDO\n" +
+                "JOIN PRODUTO PROD ON PROD.ID_PRODUTO = PP.Produto_ID_PRODUTO\n" +
+                "JOIN FUNCIONARIO F ON F.CPF = P.CPF_funcionario\n" +
+                "JOIN CLIENTE C ON C.CPF = P.CPF_cliente\n" +
+                "WHERE p.id_pedido = ?";
+    try (Connection conn = Conexao.getConexao();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            Pedido p = new Pedido();
+            p.setFormaPagamento(rs.getString("forma_pagamento"));
+            p.setDataDeVenda(
+                rs.getTimestamp("data_de_venda") != null
+                        
+                        
+                        
+                ? rs.getTimestamp("data_de_venda").toLocalDateTime()
+        : null
+);
+            return p;
+        }
+    } catch (Exception e) {
+        System.out.println("Erro ao buscar produto: " + e.getMessage());
+    }
+    return null;
+}
 
 
 }

@@ -86,19 +86,21 @@ public class TelaRelatorioVendas extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAtualizar)
-                .addGap(82, 82, 82)
-                .addComponent(btnExportarPdf)
-                .addGap(271, 271, 271))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(281, 281, 281)
                 .addComponent(jLabel1)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(179, 179, 179)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(182, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
+                        .addComponent(btnAtualizar)
+                        .addGap(77, 77, 77)
+                        .addComponent(btnExportarPdf)
+                        .addGap(407, 407, 407))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -163,7 +165,7 @@ public class TelaRelatorioVendas extends javax.swing.JFrame {
     private void carregarRelatorio() {
     List<String[]> vendas = new PedidoDAO().listarVendasConsolidadas();
 
-    String[] colunas = {"ID", "Cliente", "Funcionário", "Forma Pagamento", "Venda", "Confirmação", "Total"};
+    String[] colunas = {"ID", "Cliente", "Funcionário", "Forma Pagamento", "Venda", "Confirmação", "Status", "Total"};
     Object[][] dados = new Object[vendas.size()][7];
 
     for (int i = 0; i < vendas.size(); i++) {

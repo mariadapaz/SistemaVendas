@@ -62,7 +62,7 @@ public class TelaCarrinhoPedido extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblCarrinho = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         btnAdicionar.setText("Adicionar");
         btnAdicionar.addActionListener(new java.awt.event.ActionListener() {

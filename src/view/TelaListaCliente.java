@@ -127,6 +127,18 @@ public class TelaListaCliente extends javax.swing.JFrame {
 
     private void bntAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntAtualizarActionPerformed
         // TODO add your handling code here:
+        /**
+        Cliente cliente = new Cliente();
+        cliente.setNome(cliente.getNome());
+        cliente.setCpf(cliente.getCpf());
+        cliente.setBairro(txtBairro.getText());
+        cliente.setRua(txtRua.getText());
+        cliente.setNumeroDaCasa(Integer.parseInt(txtNumero.getText()));
+        cliente.setEmail(txtEmail.getText());
+
+        ClienteDAO dao = new ClienteDAO();
+        dao.atualizar(cliente);
+        **/
         carregarTabela();
     }//GEN-LAST:event_bntAtualizarActionPerformed
 
