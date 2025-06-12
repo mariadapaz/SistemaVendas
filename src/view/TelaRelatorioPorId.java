@@ -7,9 +7,15 @@ package view;
 import java.util.List;
 import model.Pedido;
 import model.Produto;
+import model.Funcionario;
 import dao.PedidoDAO;
 import dao.ProdutoDAO;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import model.Cliente;
+import model.RelatorioPorId;
 
 /**
  *
@@ -22,7 +28,7 @@ public class TelaRelatorioPorId extends javax.swing.JFrame {
     /**
      * Creates new form TelaRelatorioPorId
      */
-    
+    private List<RelatorioPorId> tabela = new ArrayList<>();
     private PedidoDAO pedidoDAO = new PedidoDAO();
     public TelaRelatorioPorId() {
         initComponents();
@@ -88,8 +94,8 @@ public class TelaRelatorioPorId extends javax.swing.JFrame {
                 .addGap(47, 47, 47)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(52, 52, 52))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
             .addGroup(layout.createSequentialGroup()
                 .addGap(162, 162, 162)
                 .addComponent(btnGerar)
@@ -115,9 +121,18 @@ public class TelaRelatorioPorId extends javax.swing.JFrame {
         int linha = tblID.getSelectedRow();
         if (linha >= 0) {
             int id = Integer.parseInt(tblID.getValueAt(linha, 0).toString());
-            Pedido pedido = pedidoDAO.buscarPorId(id);
+            RelatorioPorId pedido = pedidoDAO.buscarPorId(id);
+            String forma_pagamento = pedido.getForma_pagamento();
+            LocalDateTime data_de_venda = pedido.getData_de_venda();
+            String nome_funcionario = pedido.getNome_funcionario();
+            String nome_cliente = pedido.getNome_cliente();
+            BigDecimal preco = pedido.getPreco();
+            LocalDateTime data_de_confirmacao = pedido.getData_de_confirmacao();
+
+            tabela.add(new RelatorioPorId(forma_pagamento, data_de_venda, nome_funcionario, nome_cliente, preco, data_de_confirmacao));
+            atualizarTabela();
         } else {
-            JOptionPane.showMessageDialog(this, "Selecione um produto.");
+            JOptionPane.showMessageDialog(this, "Selecione um pedido.");
         }
     }//GEN-LAST:event_btnGerarActionPerformed
 
@@ -135,6 +150,22 @@ public class TelaRelatorioPorId extends javax.swing.JFrame {
     }
 
     tblID.setModel(new javax.swing.table.DefaultTableModel(dados, colunas));
+}
+    private void atualizarTabela() {
+    String[] colunas = {"Forma de Pagamento", "Data da Venda", "Nome do funcionario", "Nome do Cliente", "Preço", "Data da Confirmação"};
+    Object[][] dados = new Object[tabela.size()][6];
+
+    for (int i = 0; i < tabela.size(); i++) {
+        RelatorioPorId item = tabela.get(i);
+        dados[i][0] = item.getForma_pagamento();
+        dados[i][1] = item.getData_de_venda();
+        dados[i][2] = item.getNome_funcionario();
+        dados[i][3] = item.getNome_cliente();
+        dados[i][4] = item.getPreco();
+        dados[i][5] = item.getData_de_confirmacao();
+    }
+
+    tblRelatorio.setModel(new javax.swing.table.DefaultTableModel(dados, colunas));
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

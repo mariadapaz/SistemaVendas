@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import model.Pedido;
 import model.Produto;
+import model.RelatorioPorId;
 
 public class PedidoDAO {
 
@@ -233,23 +234,27 @@ public class PedidoDAO {
     return lista;
 }
     
-    public Pedido buscarPorId(int id) {
-    String sql = "SELECT P.FORMA_PAGAMENTO, P.DATA_DE_VENDA, F.NOME, C.NOME, PP.PRECO, p.data_de_confirmacao FROM PEDIDO p\n" +
-                "JOIN PEDIDO_HAS_PRODUTO PP ON PP.Pedido_ID_PEDIDO = P.ID_PEDIDO\n" +
-                "JOIN PRODUTO PROD ON PROD.ID_PRODUTO = PP.Produto_ID_PRODUTO\n" +
-                "JOIN FUNCIONARIO F ON F.CPF = P.CPF_funcionario\n" +
-                "JOIN CLIENTE C ON C.CPF = P.CPF_cliente\n" +
-                "WHERE p.id_pedido = ?";
+    public RelatorioPorId buscarPorId(int id) {
+    String sql = """
+    SELECT P.FORMA_PAGAMENTO, P.DATA_DE_VENDA, F.NOME, C.NOME, PP.PRECO, p.data_de_confirmacao 
+    FROM PEDIDO p
+    JOIN PEDIDO_HAS_PRODUTO PP ON PP.Pedido_ID_PEDIDO = P.ID_PEDIDO
+    JOIN PRODUTO PROD ON PROD.ID_PRODUTO = PP.Produto_ID_PRODUTO
+    JOIN FUNCIONARIO F ON F.CPF = P.CPF_funcionario
+    JOIN CLIENTE C ON C.CPF = P.CPF_cliente
+    WHERE p.id_pedido = ?
+""";
     try (Connection conn = Conexao.getConexao();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
         stmt.setInt(1, id);
         ResultSet rs = stmt.executeQuery();
-
+        
         if (rs.next()) {
-            Pedido p = new Pedido();
-            p.setFormaPagamento(rs.getString("forma_pagamento"));
-            p.setDataDeVenda(
+            RelatorioPorId r = new RelatorioPorId();
+            Produto pp = new Produto();
+            r.setForma_pagamento(rs.getString("forma_pagamento"));
+            r.setData_de_venda(
                 rs.getTimestamp("data_de_venda") != null
                         
                         
@@ -257,10 +262,22 @@ public class PedidoDAO {
                 ? rs.getTimestamp("data_de_venda").toLocalDateTime()
         : null
 );
-            return p;
+             r.setNome_funcionario(rs.getString("nome"));
+             r.setNome_cliente(rs.getString("nome"));
+             r.setPreco(rs.getBigDecimal("preco"));
+             r.setData_de_confirmacao(
+                rs.getTimestamp("data_de_confirmacao") != null
+                        
+                        
+                        
+                ? rs.getTimestamp("data_de_confirmacao").toLocalDateTime()
+        : null
+);
+             
+            return r;
         }
     } catch (Exception e) {
-        System.out.println("Erro ao buscar produto: " + e.getMessage());
+        System.out.println("Erro ao buscar pedido: " + e.getMessage());
     }
     return null;
 }
